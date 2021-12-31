@@ -5,7 +5,12 @@
 [![License](https://img.shields.io/github/license/xsorifc28/tlsv)](https://github.com/xsorifc28/tlsv/blob/main/LICENSE)
 
 A npm package based on [Tesla Light Show](https://github.com/teslamotors/light-show) for validating FSEQ file compatability with Tesla vehicles.
-Contains a CommonJS (in **dist/cjs** folder), ES Modules (in **dist/esm** folder), bundled and minified UMD (in **dist/umd** folder), as well as TypeScript declaration files (in **dist/types** folder).
+
+Contains the following modules:
+- a CommonJS (in **dist/cjs** folder)
+- ES Modules (in **dist/esm** folder)
+- bundled and minified UMD (in **dist/umd** folder)
+- TypeScript declaration files (in **dist/types** folder)
 
 ## Description
 
