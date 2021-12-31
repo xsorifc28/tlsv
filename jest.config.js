@@ -13,5 +13,15 @@ module.exports = {
     'ts-jest': {
       tsconfig: 'tsconfig.json'
     }
+  },
+  collectCoverage: true,
+  coverageReporters: [ "html", "text" ],
+  coverageThreshold: {
+    global: {
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      statements: 100
+    }
   }
 }
