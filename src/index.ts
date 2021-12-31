@@ -1,3 +1,2 @@
-import { Num } from './Num'
-
-export { Num }
+import Validator from './Validator';
+export { Validator };
