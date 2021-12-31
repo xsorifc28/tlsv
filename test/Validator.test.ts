@@ -74,7 +74,7 @@ describe('Validator', () => {
       });
     });
 
-    describe('Memory', () => {
+    describe('Memory and Duration', () => {
       it('should execute validation (memory > 100%)', () => {
         const validationResult: ValidationResults = Validator(readFileAsBuffer('sampleFiles/lightshow_mem_111.fseq'));
         expect(Object.keys(validationResult).length).toBe(6);
@@ -97,6 +97,20 @@ describe('Validator', () => {
         expect(validationResult.memoryUsage).toBeLessThan(1.7420);
         expect(validationResult.commandCount).toBe(1186);
         expect(validationResult.error).toBe('Used 174.16% of available memory! Sequence uses 1186 commands, but the maximum allowed is 681!')
+      });
+
+      it('should execute validation (memory > 100%, duration > 5m)', () => {
+        const buffer = readFile('sampleFiles/lightshow_mem_174.fseq');
+        buffer[18] = 255;
+        const validationResult: ValidationResults = Validator(buffer.buffer);
+        expect(Object.keys(validationResult).length).toBe(6);
+        expect(validationResult.frameCount).toBe(3093);
+        expect(validationResult.stepTime).toBe(255);
+        expect(validationResult.durationSecs).toBe(788.715);
+        expect(validationResult.memoryUsage).toBeGreaterThan(1.7410);
+        expect(validationResult.memoryUsage).toBeLessThan(1.7420);
+        expect(validationResult.commandCount).toBe(1186);
+        expect(validationResult.error).toBe('Expected total duration to be less than 5 minutes, got 00:13:08.715, Used 174.16% of available memory! Sequence uses 1186 commands, but the maximum allowed is 681!')
       });
     });
   });

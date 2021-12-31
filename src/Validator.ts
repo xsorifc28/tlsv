@@ -134,7 +134,12 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
 
   if (memoryUsage > 1) {
     const memoryUsageFormatted = parseFloat((memoryUsage * 100).toFixed(2));
-    error = `Used ${memoryUsageFormatted}% of available memory! Sequence uses ${commandCount} commands, but the maximum allowed is ${MEMORY_LIMIT}!`;
+    const memError = `Used ${memoryUsageFormatted}% of available memory! Sequence uses ${commandCount} commands, but the maximum allowed is ${MEMORY_LIMIT}!`;
+    if(error) {
+      error += ', ' + memError;
+    } else {
+      error = memError
+    }
   }
 
   return {
