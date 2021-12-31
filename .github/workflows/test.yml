@@ -47,6 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
+      - name: Run codecov
+        run: codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
 
