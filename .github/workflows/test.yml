@@ -39,18 +39,7 @@ jobs:
       - name: Install modules
         run: npm install
       - name: Run tests
-        run: npm test
-
-  codecov:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
-      - name: Install modules
-        run: npm install
-      - name: Run tests
-        run: npm run test:codecov
+        run: npm run test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
 
