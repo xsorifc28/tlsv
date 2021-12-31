@@ -53,7 +53,7 @@ jobs:
       - name: Install modules
         run: npm install
       - name: Run tests
-        run: npm test && codecov
+        run: npm test:codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
 

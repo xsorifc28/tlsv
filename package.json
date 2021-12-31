@@ -17,6 +17,7 @@
     "clean": "node tools/cleanup",
     "package": "npm run build && npm pack",
     "test": "jest --coverage --no-cache --runInBand",
+    "test:codecov": "npm run test && codecov",
     "lint": "eslint src --fix"
   },
   "publishConfig": {
