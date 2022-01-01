@@ -19,6 +19,12 @@ This package provides a `Validation` function which takes in the contents of an 
 
 ## Usage 
 
+### CLI
+```bash
+npm install -g @xsor/tlsv
+tlsv path/to/file.fseq
+```
+
 ### Node
 
 1. Install the package:
