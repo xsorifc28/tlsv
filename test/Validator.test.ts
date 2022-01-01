@@ -8,7 +8,9 @@ function readFile(filePath: string) {
 }
 
 function readFileAsBuffer(filePath: string) {
-  return readFile(filePath).buffer;
+  const file = readFile(filePath);
+  const fileBuffer = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+  return fileBuffer;
 }
 
 describe('Validator', () => {
