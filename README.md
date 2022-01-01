@@ -7,7 +7,7 @@
 [![build](https://img.shields.io/github/workflow/status/xsorifc28/tlsv/Release%20&%20Publish)](https://github.com/xsorifc28/tlsv/actions/workflows/publish.yml)
 [![License](https://img.shields.io/github/license/xsorifc28/tlsv)](https://github.com/xsorifc28/tlsv/blob/main/LICENSE)
 
-A npm package based on [Tesla Light Show](https://github.com/teslamotors/light-show) for validating FSEQ file compatability with Tesla vehicles.
+A npm package based on [Tesla Light Show](https://github.com/teslamotors/light-show) for validating FSEQ file compatibility with Tesla vehicles.
 
 Contains the following modules:
 - cli tool (**dist/cjs/cli.js** )
