@@ -10,6 +10,7 @@
 A npm package based on [Tesla Light Show](https://github.com/teslamotors/light-show) for validating FSEQ file compatability with Tesla vehicles.
 
 Contains the following modules:
+- cli tool (**dist/cjs/cli.js** )
 - a CommonJS (in **dist/cjs** folder)
 - ES Modules (in **dist/esm** folder)
 - bundled and minified UMD (in **dist/umd** folder)
