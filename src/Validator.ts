@@ -19,8 +19,7 @@ export class ValidationCheckResults {
 
 /**
  * Validation result type
- * Validation result is considered valid if error field is undefined
- * If the error field is specified, an error message will be built and the validation should be considered invalid
+ * Validation result is considered valid if `isValid` on the ValidationCheckResults of each element in `results` is true.
  * Other fields, if available, are returned to aid in building detailed errors or descriptions
  * @typedef {Object} ValidationResults - creates a new type named 'ValidationResults'
  * @property {number} [frameCount=0] - number of frames
@@ -28,7 +27,7 @@ export class ValidationCheckResults {
  * @property {number} [duration=0] - duration in milliseconds
  * @property {number} [commandCount=0] - number of commands, maximum being 681. commandCount / 681 = memoryUsage
  * @property {number} [stepTime=0] - duration between frames
- * @property {(string | undefined)} [error=undefined] - error message, validation invalid if defined, valid if undefined
+ * @property {{ [key: number]: ValidationCheckResults }} [results=[]] - results of each check that was performed
  */
 export type ValidationResults = {
   frameCount: number;
