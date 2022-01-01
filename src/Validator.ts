@@ -6,6 +6,16 @@ export enum ValidationPart {
   Memory = 4,
 };
 
+export class ValidationCheckResults {
+  isValid: boolean;
+  message: String;
+
+  constructor(isValid: boolean, message: String) {
+    this.isValid = isValid
+    this.message = message
+  }
+}
+
 /**
  * Validation result type
  * Validation result is considered valid if error field is undefined
@@ -25,7 +35,7 @@ export type ValidationResults = {
   duration: number;
   commandCount: number;
   stepTime: number;
-  results: { [key: number]: [boolean, string] };
+  results: { [key: number]: ValidationCheckResults };
 };
 
 /**
@@ -43,7 +53,7 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
     results: [],
   }
   if(!data) {
-    console.log('An input type of ArrayBuffer or ArrayBufferLike must be provided!';
+    console.error('An input type of ArrayBuffer or ArrayBufferLike must be provided!');
     return validationResult;
   }
 
@@ -65,35 +75,40 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
 
   const compressionType = header.getUint8(20);
 
+  const isValid = true
+  const isInvalid = false
+
   if(magic !== 'PSEQ' || start < 24 || validationResult.frameCount < 1 || validationResult.stepTime < 15 || minor !== 0 || major !== 2) {
-    validationResult.results[ValidationPart.FileFormat] = [true, 'Unknown file format, expected FSEQ v2.0'];
+    const message = 'Unknown file format, expected FSEQ v2.0'
+    validationResult.results[ValidationPart.FileFormat] = new ValidationCheckResults(isInvalid, message);
     return validationResult
   } else {
-    validationResult.results[ValidationPart.FileFormat] = [false, 'File format is valid.'];
+    validationResult.results[ValidationPart.FileFormat] = new ValidationCheckResults(isValid, 'File format is valid.');
   }
 
   if(chCount !== 48) {
     const message = `Expected 48 channels, got ${chCount}`;
-    validationResult.results[ValidationPart.ChannelCount] = [true, message];
+    validationResult.results[ValidationPart.ChannelCount] = new ValidationCheckResults(isInvalid, message);
     return validationResult;
   } else {
-    validationResult.results[ValidationPart.ChannelCount] = [false, 'Channel count valid.'];
+    validationResult.results[ValidationPart.ChannelCount] = new ValidationCheckResults(isValid, 'Channel count valid.');
   }
 
   if(compressionType !== 0) {
-    validationResult.results[ValidationPart.FseqType] = [true, 'Expected file format to be V2 Uncompressed'];
+    const message = 'Expected file format to be V2 Uncompressed';
+    validationResult.results[ValidationPart.FseqType] = new ValidationCheckResults(isInvalid, message);
     return validationResult;
   } else {
-    validationResult.results[ValidationPart.FseqType] = [false, 'File FSEQ format is valid.']
+    validationResult.results[ValidationPart.FseqType] = new ValidationCheckResults(isValid, 'File FSEQ format is valid.');
   }
 
   validationResult.duration = (validationResult.frameCount * validationResult.stepTime);
   if(validationResult.duration > 5 * 60 * 1000) {
     const durationStr = new Date(validationResult.duration).toISOString().substr(11, 12);
     const message = `Expected total duration to be less than 5 minutes, got ${durationStr}`;
-    validationResult.results[ValidationPart.Duration] = [true, message]
+    validationResult.results[ValidationPart.Duration] = new ValidationCheckResults(isInvalid, message);
   } else {
-    validationResult.results[ValidationPart.Duration] = [false, '']
+    validationResult.results[ValidationPart.Duration] = new ValidationCheckResults(isValid, '');
   }
 
   let prevLight: number[] = [];
@@ -153,9 +168,9 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   if(validationResult.memoryUsage > 1) {
     const memoryUsageFormatted = parseFloat((validationResult.memoryUsage * 100).toFixed(2));
     const memError = `Used ${memoryUsageFormatted}% of available memory! Sequence uses ${validationResult.commandCount} commands, but the maximum allowed is ${MEMORY_LIMIT}!`;
-    validationResult.results[ValidationPart.Memory] = [true, memError]
+    validationResult.results[ValidationPart.Memory] = new ValidationCheckResults(isInvalid, memError);
   } else {
-    validationResult.results[ValidationPart.Memory] = [false, '']
+    validationResult.results[ValidationPart.Memory] = new ValidationCheckResults(isValid, '');
   }
 
   return validationResult;
