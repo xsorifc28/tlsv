@@ -1,16 +1,17 @@
 export enum ValidationPart {
-  FileFormat = 0,
-  ChannelCount = 1,
-  FseqType = 2,
-  Duration = 3,
-  Memory = 4,
-};
+  InputData = 0,
+  FileFormat = 1,
+  ChannelCount = 2,
+  FseqType = 3,
+  Duration = 4,
+  Memory = 5,
+}
 
 export class ValidationCheckResults {
   isValid: boolean;
-  message: String;
+  message: string;
 
-  constructor(isValid: boolean, message: String) {
+  constructor(isValid: boolean, message: string) {
     this.isValid = isValid
     this.message = message
   }
@@ -52,9 +53,16 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
     stepTime: 0,
     results: [],
   }
+
+  const isValid = true
+  const isInvalid = false
+
   if(!data) {
-    console.error('An input type of ArrayBuffer or ArrayBufferLike must be provided!');
+    const message = 'An input type of ArrayBuffer or ArrayBufferLike must be provided!';
+    validationResult.results[ValidationPart.InputData] = new ValidationCheckResults(isInvalid, message)
     return validationResult;
+  } else {
+    validationResult.results[ValidationPart.InputData] = new ValidationCheckResults(isValid, "")
   }
 
   const MEMORY_LIMIT = 681;
@@ -74,9 +82,6 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   validationResult.stepTime = header.getUint8(18);
 
   const compressionType = header.getUint8(20);
-
-  const isValid = true
-  const isInvalid = false
 
   if(magic !== 'PSEQ' || start < 24 || validationResult.frameCount < 1 || validationResult.stepTime < 15 || minor !== 0 || major !== 2) {
     const message = 'Unknown file format, expected FSEQ v2.0'
