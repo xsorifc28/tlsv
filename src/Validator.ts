@@ -9,7 +9,7 @@ export enum ErrorType {
 
 /**
  * Validation result type
- * Validation result is considered valid if `isValid` on the ValidationCheckResults of each element in `results` is true.
+ * Validation result is considered valid if the errors list is undefined, otherwise invalid.
  * Other fields, if available, are returned to aid in building detailed errors or descriptions
  * @typedef {Object} ValidationResults - creates a new type named 'ValidationResults'
  * @property {number} [frameCount=0] - number of frames
@@ -17,33 +17,16 @@ export enum ErrorType {
  * @property {number} [duration=0] - duration in milliseconds
  * @property {number} [commandCount=0] - number of commands, maximum being 681. commandCount / 681 = memoryUsage
  * @property {number} [stepTime=0] - duration between frames
- * @property {{ [key: number]: ValidationCheckResults }} [results=[]] - results of each check that was performed
+ * @property {ErrorType[] | undefined} [errors=undefined] - If any, the errors that were found. If it undefined, the validation result is valid.
  */
-export class ValidationResults {
+ export type ValidationResults = {
   frameCount: number;
   memoryUsage: number;
   duration: number;
   commandCount: number;
   stepTime: number;
   channelCount: number;
-  errors: ErrorType[];
-
-  constructor(
-    { frameCount, memoryUsage, duration, commandCount, stepTime, channelCount, errors }:
-    { frameCount: number, memoryUsage: number, duration: number, commandCount: number, stepTime: number, channelCount: number, errors: ErrorType[] }
-  ) {
-    this.frameCount = frameCount
-    this.memoryUsage = memoryUsage
-    this.duration = duration
-    this.commandCount = commandCount
-    this.stepTime = stepTime
-    this.channelCount = channelCount
-    this.errors = errors
-  };
-
-  get isValid(): boolean {
-    return this.errors.length == 0 ? true : false;
-  };
+  errors: ErrorType[] | undefined;
 };
 
 /**
@@ -52,7 +35,7 @@ export class ValidationResults {
  * @returns ValidationResults
  */
 export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
-  const validationResult = new ValidationResults( {
+  const validationResult: ValidationResults = {
     frameCount: 0,
     memoryUsage: 0,
     duration: 0,
@@ -60,10 +43,10 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
     stepTime: 0,
     channelCount: 0,
     errors: [],
-  } )
+  }
 
   if(!data) {
-    validationResult.errors.push(ErrorType.InputData)
+    validationResult.errors!.push(ErrorType.InputData);
     return validationResult;
   }
 
@@ -87,23 +70,23 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   const compressionType = header.getUint8(20);
 
   if(magic !== 'PSEQ' || start < 24 || validationResult.frameCount < 1 || validationResult.stepTime < 15 || minor !== 0 || major !== 2) {
-    validationResult.errors.push(ErrorType.FileFormat);
+    validationResult.errors!.push(ErrorType.FileFormat);
     return validationResult
   }
 
   if(chCount !== 48) {
-    validationResult.errors.push(ErrorType.ChannelCount)
+    validationResult.errors!.push(ErrorType.ChannelCount)
     return validationResult;
   }
 
   if(compressionType !== 0) {
-    validationResult.errors.push(ErrorType.FseqType)
+    validationResult.errors!.push(ErrorType.FseqType)
     return validationResult;
   }
 
   validationResult.duration = (validationResult.frameCount * validationResult.stepTime);
   if(validationResult.duration > 5 * 60 * 1000) {
-    validationResult.errors.push(ErrorType.Duration)
+    validationResult.errors!.push(ErrorType.Duration)
   }
 
   let prevLight: number[] = [];
@@ -161,8 +144,12 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   validationResult.memoryUsage = validationResult.commandCount / MEMORY_LIMIT;
 
   if(validationResult.memoryUsage > 1) {
-    validationResult.errors.push(ErrorType.Memory)
+    validationResult.errors!.push(ErrorType.Memory)
   }
+
+  if (validationResult.errors!.length == 0) {
+    validationResult.errors = undefined;
+  };
 
   return validationResult;
 };
