@@ -8,8 +8,7 @@ const validation: ValidationResults = Validator(fileArrayBuffer);
 
 if (validation.errors.length > 0) {
 	const errorMessages = buildErrorMessages(validation);
-
-	for (let message of Object.values(errorMessages)) {
+	for (let message of errorMessages) {
 		console.error('VALIDATION ERROR:', message);
 	};
 } else {
