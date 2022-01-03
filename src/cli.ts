@@ -7,15 +7,12 @@ const fileArrayBuffer = file.buffer.slice(file.byteOffset, file.byteOffset + fil
 const validation: ValidationResults = Validator(fileArrayBuffer);
 
 if (validation.errors.length > 0) {
-	const errorMessages = buildErrorMessages(validation);
-
-	errorMessages.forEach(message => {
+  buildErrorMessages(validation).forEach(message => {
 		console.error('VALIDATION ERROR:', message);
 	});
-
 } else {
   const durationFormatted = new Date(validation.duration * 1000).toISOString().substr(11, 12);
   const memoryUsage = parseFloat((validation.memoryUsage * 100).toFixed(2));
-  console.log(`Found ${validation.frameCount} frames, step time of ${validation.stepTime} ms for a total duration of ${durationFormatted}`);
-  console.log(`Used ${memoryUsage}% of the available memory`);
+  console.info(`Found ${validation.frameCount} frames, step time of ${validation.stepTime} ms for a total duration of ${durationFormatted}`);
+  console.info(`Used ${memoryUsage}% of the available memory`);
 }
