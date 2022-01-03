@@ -156,29 +156,30 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   return validationResult;
 };
 
-export function buildErrorMessages(validationResult: ValidationResults): { [key: number]: string } {
-  var errorMessages: { [key: number]: string } = {};
+export function buildErrorMessages(validationResult: ValidationResults, errors: ErrorType[]): string[] {
+  const errorMessages: string[] = [];
 
-  for (let error of validationResult.errors) {
-    if (error == ErrorType.FileFormat) {
-      errorMessages[error] = 'Unknown file format, expected FSEQ v2.0';
+  errors.forEach(error => {
+    switch(error) {
+      case ErrorType.InputData:
+        errorMessages.push('An input type of ArrayBuffer or ArrayBufferLike must be provided!');
+        break;
+      case ErrorType.FileFormat:
+        errorMessages.push('Unknown file format, expected FSEQ v2.0');
+        break;
+      case ErrorType.ChannelCount:
+        errorMessages.push(`Expected 48 channels, got ${validationResult.channelCount}`);
+        break;
+      case ErrorType.FseqType:
+        errorMessages.push('Expected file format to be V2 Uncompressed');
+        break;
+      case ErrorType.Duration:
+        errorMessages.push(`Expected total duration to be less than 5 minutes, got ${new Date(validationResult.duration).toISOString().substr(11, 12)}`);
+        break;
+      case ErrorType.Memory:
+        errorMessages.push(`Used ${parseFloat((validationResult.memoryUsage * 100).toFixed(2))}% of available memory! Sequence uses ${validationResult.commandCount} commands, but the maximum allowed is ${MEMORY_LIMIT}!`);
     }
-    else if (error == ErrorType.ChannelCount) {
-      errorMessages[error] = `Expected 48 channels, got ${validationResult.channelCount}.`;
-    }
-    else if (error == ErrorType.FseqType) {
-      errorMessages[error] = 'Expected file format (FSEQ Version) to be V2 Uncompressed';
-    }
-    else if (error == ErrorType.Duration) {
-      const durationStr = new Date(validationResult.duration).toISOString().substr(11, 12);
-      errorMessages[error] = `Expected total duration to be less than 5 minutes, got ${durationStr}`;
-    }
-    else if (error == ErrorType.Memory) {
-      const memoryUsageFormatted = parseFloat((validationResult.memoryUsage * 100).toFixed(2));
-      const memError = `Used ${memoryUsageFormatted}% of available memory! Sequence uses ${validationResult.commandCount} commands, but the maximum allowed is ${MEMORY_LIMIT}!`;
-      errorMessages[error] = memError
-    };
-  };
+  });
 
   return errorMessages;
 }
