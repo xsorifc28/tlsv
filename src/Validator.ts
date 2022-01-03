@@ -1,3 +1,9 @@
+/**
+ * Those are the possible types of errors which can be returned by the validator.
+ * 
+ * Implementation note: Don't change the mapping between error type and number, as this will lead to wrong mappings
+ * for outside code using the validator and these error types.
+ */
 export enum ErrorType {
   InputData = 0,
   FileFormat = 1,
