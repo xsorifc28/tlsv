@@ -1,7 +1,22 @@
 /**
+ * Types of errors that can be returned by the validator
+ * Note that the order of the enum MUST NOT be changed as changes would be backwards incompatible
+ */
+export enum ErrorType {
+  InputData = 0,
+  FileFormat = 1,
+  ChannelCount = 2,
+  FseqType = 3,
+  Duration = 4,
+  Memory = 5,
+}
+
+// Global default values
+const MEMORY_LIMIT = 681;
+
+/**
  * Validation result type
- * Validation result is considered valid if error field is undefined
- * If the error field is specified, an error message will be built and the validation should be considered invalid
+ * Validation result is considered valid if the errors array is empty, otherwise invalid.
  * Other fields, if available, are returned to aid in building detailed errors or descriptions
  * @typedef {Object} ValidationResults - creates a new type named 'ValidationResults'
  * @property {number} [frameCount=0] - number of frames
@@ -9,7 +24,7 @@
  * @property {number} [duration=0] - duration in milliseconds
  * @property {number} [commandCount=0] - number of commands, maximum being 681. commandCount / 681 = memoryUsage
  * @property {number} [stepTime=0] - duration between frames
- * @property {(string | undefined)} [error=undefined] - error message, validation invalid if defined, valid if undefined
+ * @property {ErrorType[]} [errors=[]] - If length > 0, contains the errors that were found. If it's empty, the validation result is valid.
  */
 export type ValidationResults = {
   frameCount: number;
@@ -17,7 +32,8 @@ export type ValidationResults = {
   duration: number;
   commandCount: number;
   stepTime: number;
-  error: string | undefined;
+  channelCount: number;
+  errors: ErrorType[];
 };
 
 /**
@@ -27,20 +43,20 @@ export type ValidationResults = {
  */
 export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   const validationResult: ValidationResults = {
-    commandCount: 0,
-    duration: 0,
     frameCount: 0,
     memoryUsage: 0,
+    duration: 0,
+    commandCount: 0,
     stepTime: 0,
-    error: undefined,
-  }
+    channelCount: 0,
+    errors: [],
+  };
 
   if(!data) {
-    validationResult.error = 'An input type of ArrayBuffer or ArrayBufferLike must be provided!';
+    validationResult.errors.push(ErrorType.InputData);
     return validationResult;
   }
 
-  const MEMORY_LIMIT = 681;
   const arraysEqual = (a: number[], b: number[]) =>
     a.length === b.length && a.every((v, i) => v === b[i]);
 
@@ -54,29 +70,29 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   const chCount = header.getUint32(10, true);
 
   validationResult.frameCount = header.getUint32(14, true);
+  validationResult.channelCount = chCount
   validationResult.stepTime = header.getUint8(18);
 
   const compressionType = header.getUint8(20);
 
   if(magic !== 'PSEQ' || start < 24 || validationResult.frameCount < 1 || validationResult.stepTime < 15 || minor !== 0 || major !== 2) {
-    validationResult.error = 'Unknown file format, expected FSEQ v2.0';
+    validationResult.errors.push(ErrorType.FileFormat);
     return validationResult;
   }
 
   if(chCount !== 48) {
-    validationResult.error = `Expected 48 channels, got ${chCount}`;
+    validationResult.errors.push(ErrorType.ChannelCount);
     return validationResult;
   }
 
   if(compressionType !== 0) {
-    validationResult.error = 'Expected file format to be V2 Uncompressed';
+    validationResult.errors.push(ErrorType.FseqType);
     return validationResult;
   }
 
   validationResult.duration = (validationResult.frameCount * validationResult.stepTime);
   if(validationResult.duration > 5 * 60 * 1000) {
-    const durationStr = new Date(validationResult.duration).toISOString().substr(11, 12);
-    validationResult.error = `Expected total duration to be less than 5 minutes, got ${durationStr}`;
+    validationResult.errors.push(ErrorType.Duration);
   }
 
   let prevLight: number[] = [];
@@ -134,14 +150,36 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   validationResult.memoryUsage = validationResult.commandCount / MEMORY_LIMIT;
 
   if(validationResult.memoryUsage > 1) {
-    const memoryUsageFormatted = parseFloat((validationResult.memoryUsage * 100).toFixed(2));
-    const memError = `Used ${memoryUsageFormatted}% of available memory! Sequence uses ${validationResult.commandCount} commands, but the maximum allowed is ${MEMORY_LIMIT}!`;
-    if(validationResult.error) {
-      validationResult.error += ', ' + memError;
-    } else {
-      validationResult.error = memError
-    }
+    validationResult.errors.push(ErrorType.Memory);
   }
 
   return validationResult;
 };
+
+export function buildErrorMessages(validationResult: ValidationResults): string[] {
+  const errorMessages: string[] = [];
+
+  validationResult.errors.forEach(error => {
+    switch(error) {
+      case ErrorType.InputData:
+        errorMessages.push('An input type of ArrayBuffer or ArrayBufferLike must be provided!');
+        break;
+      case ErrorType.FileFormat:
+        errorMessages.push('Unknown file format, expected FSEQ v2.0');
+        break;
+      case ErrorType.ChannelCount:
+        errorMessages.push(`Expected 48 channels, got ${validationResult.channelCount}`);
+        break;
+      case ErrorType.FseqType:
+        errorMessages.push('Expected file format to be V2 Uncompressed');
+        break;
+      case ErrorType.Duration:
+        errorMessages.push(`Expected total duration to be less than 5 minutes, got ${new Date(validationResult.duration).toISOString().substr(11, 12)}`);
+        break;
+      case ErrorType.Memory:
+        errorMessages.push(`Used ${parseFloat((validationResult.memoryUsage * 100).toFixed(2))}% of available memory! Sequence uses ${validationResult.commandCount} commands, but the maximum allowed is ${MEMORY_LIMIT}!`);
+    }
+  });
+
+  return errorMessages;
+}
