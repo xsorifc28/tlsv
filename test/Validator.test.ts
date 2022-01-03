@@ -9,8 +9,7 @@ function readFile(filePath: string): Buffer {
 }
 
 function convertBufferToArrayBuffer(buffer: Buffer): ArrayBuffer {
-  const fileBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-  return fileBuffer;
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 }
 
 describe('Validator', () => {
@@ -32,6 +31,7 @@ describe('Validator', () => {
   describe('Invalid', () => {
     describe('Bad Input', () => {
       it('should return error (no data)', () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const validationResult: ValidationResults = Validator();
         expect(validationResult).toEqual({
