@@ -1,5 +1,5 @@
 import type { ValidationResults } from "../src/Validator";
-import { ErrorType } from "../src/Validator";
+import { buildErrorMessages, ErrorType } from "../src/Validator";
 import { Validator } from '../src/index'
 import * as fs from 'fs';
 import * as path from 'path';
@@ -150,6 +150,75 @@ describe('Validator', () => {
         expect(validationResult.errors.length).toBe(2);
         expect(validationResult.errors).toContain(ErrorType.Duration);
         expect(validationResult.errors).toContain(ErrorType.Memory);
+      });
+    });
+
+    describe('Validation error messages', () => {
+      const validationResult: ValidationResults = {
+        frameCount: 0,
+        memoryUsage: 0,
+        duration: 0,
+        commandCount: 0,
+        stepTime: 0,
+        channelCount: 0,
+        errors: [],
+      };
+
+      it('should output input data error message', () => {
+        validationResult.errors = [ErrorType.InputData];
+        const errorMessages = buildErrorMessages(validationResult);
+        expect(errorMessages.length).toBe(1);
+        expect(errorMessages).toContain('An input type of ArrayBuffer or ArrayBufferLike must be provided!');
+      });
+
+      it('should output file format error message', () => {
+        validationResult.errors = [ErrorType.FileFormat];
+        const errorMessages = buildErrorMessages(validationResult);
+        expect(errorMessages.length).toBe(1);
+        expect(errorMessages).toContain('Unknown file format, expected FSEQ v2.0');
+      });
+
+      it('should output channel count error message', () => {
+        validationResult.errors = [ErrorType.ChannelCount];
+        validationResult.channelCount = 281;
+        const errorMessages = buildErrorMessages(validationResult);
+        expect(errorMessages.length).toBe(1);
+        expect(errorMessages).toContain(`Expected 48 channels, got ${validationResult.channelCount}`);
+      });
+
+      it('should output file format (V2 Uncompressed) error message', () => {
+        validationResult.errors = [ErrorType.FseqType];
+        const errorMessages = buildErrorMessages(validationResult);
+        expect(errorMessages.length).toBe(1);
+        expect(errorMessages).toContain('Expected file format to be V2 Uncompressed');
+      });
+
+      it('should output duration error message', () => {
+        validationResult.errors = [ErrorType.Duration];
+        validationResult.duration = 3700;
+        const errorMessages = buildErrorMessages(validationResult);
+        expect(errorMessages.length).toBe(1);
+        expect(errorMessages).toContain(`Expected total duration to be less than 5 minutes, got ${new Date(validationResult.duration).toISOString().substr(11, 12)}`);
+      });
+
+      it('should output memory error message', () => {
+        validationResult.errors = [ErrorType.Memory];
+        validationResult.memoryUsage = 1.12;
+        validationResult.commandCount = 1186;
+        const errorMessages = buildErrorMessages(validationResult);
+        expect(errorMessages.length).toBe(1);
+        expect(errorMessages).toContain(`Used ${parseFloat((validationResult.memoryUsage * 100).toFixed(2))}% of available memory! Sequence uses ${validationResult.commandCount} commands, but the maximum allowed is 681!`);
+      });
+
+      it('should output duration and memory error message', () => {
+        validationResult.errors = [ErrorType.Duration, ErrorType.Memory];
+        validationResult.duration = 3900;
+        validationResult.memoryUsage = 1.39;
+        validationResult.commandCount = 1586;
+        const errorMessages = buildErrorMessages(validationResult);
+        expect(errorMessages.length).toBe(2);
+        expect(errorMessages).toContain(`Expected total duration to be less than 5 minutes, got ${new Date(validationResult.duration).toISOString().substr(11, 12)}`);
+        expect(errorMessages).toContain(`Used ${parseFloat((validationResult.memoryUsage * 100).toFixed(2))}% of available memory! Sequence uses ${validationResult.commandCount} commands, but the maximum allowed is 681!`);
       });
     });
   });
