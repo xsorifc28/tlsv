@@ -25,7 +25,7 @@ describe('Validator', () => {
       expect(validationResult.memoryUsage).toBeLessThan(0.17);
       expect(validationResult.commandCount).toBe(112);
       expect(validationResult.channelCount).toBe(48);
-      expect(validationResult.errors.length).toBe(0)
+      expect(validationResult.errors.length).toBe(0);
     });
   });
 
@@ -117,8 +117,8 @@ describe('Validator', () => {
         expect(validationResult.memoryUsage).toBeLessThan(1.12);
         expect(validationResult.commandCount).toBe(756);
         expect(validationResult.channelCount).toBe(48);
-        expect(validationResult.errors.length).toBe(1)
-        expect(validationResult.errors).toContain(ErrorType.Memory)
+        expect(validationResult.errors.length).toBe(1);
+        expect(validationResult.errors).toContain(ErrorType.Memory);
       });
 
       it('should execute validation (memory > 100%) #2', () => {
@@ -131,8 +131,8 @@ describe('Validator', () => {
         expect(validationResult.memoryUsage).toBeLessThan(1.7420);
         expect(validationResult.commandCount).toBe(1186);
         expect(validationResult.channelCount).toBe(48);
-        expect(validationResult.errors.length).toBe(1)
-        expect(validationResult.errors).toContain(ErrorType.Memory)
+        expect(validationResult.errors.length).toBe(1);
+        expect(validationResult.errors).toContain(ErrorType.Memory);
       });
 
       it('should execute validation (memory > 100%, duration > 5m)', () => {
@@ -146,7 +146,7 @@ describe('Validator', () => {
         expect(validationResult.memoryUsage).toBeGreaterThan(1.7410);
         expect(validationResult.memoryUsage).toBeLessThan(1.7420);
         expect(validationResult.commandCount).toBe(1186);
-        expect(validationResult.channelCount).toBe(48)
+        expect(validationResult.channelCount).toBe(48);
         expect(validationResult.errors.length).toBe(2);
         expect(validationResult.errors).toContain(ErrorType.Duration);
         expect(validationResult.errors).toContain(ErrorType.Memory);
