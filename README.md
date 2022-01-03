@@ -41,11 +41,11 @@ import { Validator} from '@xsor/tlsv';
 const fileContents = fs.readFileSync(path.join(__dirname, 'path/to/lightshow.fseq'));
 const validationResult: ValidationResults = Validator(fileContents.buffer);
 
-if(!validationResult.error) {
+if(!validationResult.errors) {
     // File is valid
 } else {
-    // File is invalid
-    console.error(validationResult.error);
+    // File is invalid, print types of errors
+    console.error(validationResult.errors);
 }
 ```
 
@@ -59,6 +59,7 @@ const reader = new FileReader();
 
 reader.onload = (event) => {
   const validationResult = Validator(event.target.result);
+  // process the result
 };
 
 reader.onerror = function(e) {
