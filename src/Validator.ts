@@ -1,8 +1,6 @@
 /**
- * Those are the possible types of errors which can be returned by the validator.
- * 
- * Implementation note: Don't change the mapping between error type and number, as this will lead to wrong mappings
- * for outside code using the validator and these error types.
+ * Types of errors that can be returned by the validator
+ * Note that the order of the enum MUST NOT be changed as changes would be backwards incompatible
  */
 export enum ErrorType {
   InputData = 0,
@@ -15,7 +13,7 @@ export enum ErrorType {
 
 /**
  * Validation result type
- * Validation result is considered valid if the errors list is empty, otherwise invalid.
+ * Validation result is considered valid if the errors array is empty, otherwise invalid.
  * Other fields, if available, are returned to aid in building detailed errors or descriptions
  * @typedef {Object} ValidationResults - creates a new type named 'ValidationResults'
  * @property {number} [frameCount=0] - number of frames
