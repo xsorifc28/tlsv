@@ -156,10 +156,10 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
   return validationResult;
 };
 
-export function buildErrorMessages(validationResult: ValidationResults, errors: ErrorType[]): string[] {
+export function buildErrorMessages(validationResult: ValidationResults): string[] {
   const errorMessages: string[] = [];
 
-  errors.forEach(error => {
+  validationResult.errors.forEach(error => {
     switch(error) {
       case ErrorType.InputData:
         errorMessages.push('An input type of ArrayBuffer or ArrayBufferLike must be provided!');
