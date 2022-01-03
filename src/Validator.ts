@@ -11,6 +11,9 @@ export enum ErrorType {
   Memory = 5,
 }
 
+// Global default values
+const MEMORY_LIMIT = 681;
+
 /**
  * Validation result type
  * Validation result is considered valid if the errors array is empty, otherwise invalid.
@@ -54,7 +57,6 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
     return validationResult;
   }
 
-  const MEMORY_LIMIT = 681;
   const arraysEqual = (a: number[], b: number[]) =>
     a.length === b.length && a.every((v, i) => v === b[i]);
 
@@ -153,3 +155,30 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
 
   return validationResult;
 };
+
+export function buildErrorMessages(validationResult: ValidationResults): { [key: number]: string } {
+  var errorMessages: { [key: number]: string } = {};
+
+  for (let error of validationResult.errors) {
+    if (error == ErrorType.FileFormat) {
+      errorMessages[error] = 'Unknown file format, expected FSEQ v2.0';
+    }
+    else if (error == ErrorType.ChannelCount) {
+      errorMessages[error] = `Expected 48 channels, got ${validationResult.channelCount}.`;
+    }
+    else if (error == ErrorType.FseqType) {
+      errorMessages[error] = 'Expected file format (FSEQ Version) to be V2 Uncompressed';
+    }
+    else if (error == ErrorType.Duration) {
+      const durationStr = new Date(validationResult.duration).toISOString().substr(11, 12);
+      errorMessages[error] = `Expected total duration to be less than 5 minutes, got ${durationStr}`;
+    }
+    else if (error == ErrorType.Memory) {
+      const memoryUsageFormatted = parseFloat((validationResult.memoryUsage * 100).toFixed(2));
+      const memError = `Used ${memoryUsageFormatted}% of available memory! Sequence uses ${validationResult.commandCount} commands, but the maximum allowed is ${MEMORY_LIMIT}!`;
+      errorMessages[error] = memError
+    };
+  };
+
+  return errorMessages;
+}
