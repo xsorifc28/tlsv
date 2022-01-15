@@ -1,6 +1,5 @@
 import type { ValidationResults } from "../src/Validator";
-import { buildErrorMessages, ErrorType } from "../src/Validator";
-import { Validator } from '../src/index'
+import { Validator, ErrorType, buildErrorMessages } from '../src/index'
 import * as fs from 'fs';
 import * as path from 'path';
 
