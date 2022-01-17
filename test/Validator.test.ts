@@ -25,6 +25,20 @@ describe('Validator', () => {
       expect(validationResult.channelCount).toBe(48);
       expect(validationResult.errors.length).toBe(0);
     });
+
+    it('should execute validation (valid #2)', () => {
+      const buffer = readFile('sampleFiles/route66_time.fseq');
+      const validationResult: ValidationResults = Validator(convertBufferToArrayBuffer(buffer));
+      expect(validationResult).toEqual({
+        errors: [],
+        commandCount: 211,
+        duration: 192480,
+        frameCount: 9624,
+        memoryUsage: 0.30983847283406757,
+        stepTime: 20,
+        channelCount: 48,
+      });
+    });
   });
 
   describe('Invalid', () => {
