@@ -12,7 +12,7 @@ export enum ErrorType {
 }
 
 // Global default values
-const MEMORY_LIMIT = 681;
+const MEMORY_LIMIT = 3500;
 
 /**
  * Validation result type
@@ -20,9 +20,9 @@ const MEMORY_LIMIT = 681;
  * Other fields, if available, are returned to aid in building detailed errors or descriptions
  * @typedef {Object} ValidationResults - creates a new type named 'ValidationResults'
  * @property {number} [frameCount=0] - number of frames
- * @property {number} [memoryUsage=0] - memory usage, ranging from 0 to 1 (1 = 100%), commandCount / 681 = memoryUsage
+ * @property {number} [memoryUsage=0] - memory usage, ranging from 0 to 1 (1 = 100%), commandCount / 3500 = memoryUsage
  * @property {number} [duration=0] - duration in milliseconds
- * @property {number} [commandCount=0] - number of commands, maximum being 681. commandCount / 681 = memoryUsage
+ * @property {number} [commandCount=0] - number of commands, maximum being 3500. commandCount / 3500 = memoryUsage
  * @property {number} [stepTime=0] - duration between frames
  * @property {ErrorType[]} [errors=[]] - If length > 0, contains the errors that were found. If it's empty, the validation result is valid.
  */
