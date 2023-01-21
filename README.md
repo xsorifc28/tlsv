@@ -1,6 +1,7 @@
 # XLights FSEQ Light Show Validator
 
-[![npm package](https://img.shields.io/badge/npm%20i-@xsor/tlsv-brightgreen)](https://www.npmjs.com/package/@xsor/tlsv) 
+[![npm package](https://img.shields.io/badge/npm%20i-@xsor/tlsv-brightgreen)](https://www.npmjs.com/package/@xsor/tlsv)
+[![downloads](https://img.shields.io/npm/dt/@xsor/tlsv)](https://www.npmjs.com/package/@xsor/tlsv)
 [![version](https://img.shields.io/npm/v/@xsor/tlsv)](https://github.com/xsorifc28/tlsv/releases)
 [![coverage](https://img.shields.io/codecov/c/github/xsorifc28/tlsv)](https://app.codecov.io/gh/xsorifc28/tlsv)
 [![test](https://img.shields.io/github/actions/workflow/status/xsorifc28/tlsv/test.yml?branch=main&label=tests)](https://github.com/xsorifc28/tlsv/actions/workflows/test.yml)
