@@ -3,8 +3,8 @@
 [![npm package](https://img.shields.io/badge/npm%20i-@xsor/tlsv-brightgreen)](https://www.npmjs.com/package/@xsor/tlsv) 
 [![version](https://img.shields.io/npm/v/@xsor/tlsv)](https://github.com/xsorifc28/tlsv/releases)
 [![coverage](https://img.shields.io/codecov/c/github/xsorifc28/tlsv)](https://app.codecov.io/gh/xsorifc28/tlsv)
-[![test](https://img.shields.io/github/actions/workflow/status/xsorifc28/tlsv/test.yml?branch=main?label=tests)](https://github.com/xsorifc28/tlsv/actions/workflows/test.yml)
-[![build](https://img.shields.io/github/actions/workflow/status/xsorifc28/tlsv/publish.yml?branch=main)](https://github.com/xsorifc28/tlsv/actions/workflows/publish.yml)
+[![test](https://img.shields.io/github/actions/workflow/status/xsorifc28/tlsv/test.yml?branch=main&label=tests)](https://github.com/xsorifc28/tlsv/actions/workflows/test.yml)
+[![build]((https://img.shields.io/github/actions/workflow/status/xsorifc28/tlsv/publish.yml?branch=main)](https://github.com/xsorifc28/tlsv/actions/workflows/publish.yml)
 [![License](https://img.shields.io/github/license/xsorifc28/tlsv)](https://github.com/xsorifc28/tlsv/blob/main/LICENSE)
 
 A npm package based on [Tesla Light Show](https://github.com/teslamotors/light-show) for validating FSEQ file compatibility with Tesla vehicles.
