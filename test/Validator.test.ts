@@ -73,6 +73,21 @@ describe('Validator', () => {
         });
       });
 
+      it('should return error (minor = 3)', () => {
+        const buffer = readFile('sampleFiles/lightshow_valid.fseq');
+        buffer[6] = 3;
+        const validationResult: ValidationResults = Validator(convertBufferToArrayBuffer(buffer));
+        expect(validationResult).toEqual({
+          errors: [ErrorType.FileFormat],
+          commandCount: 0,
+          duration: 0,
+          frameCount: 2247,
+          memoryUsage: 0,
+          stepTime: 20,
+          channelCount: 48,
+        });
+      });
+
       it('should return error (not 48 channels)', () => {
         const buffer = readFile('sampleFiles/lightshow_valid.fseq');
         buffer[11] = 79;

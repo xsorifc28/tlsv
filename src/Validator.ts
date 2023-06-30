@@ -75,7 +75,7 @@ export default (data: ArrayBuffer | ArrayBufferLike): ValidationResults => {
 
   const compressionType = header.getUint8(20);
 
-  if(magic !== 'PSEQ' || start < 24 || validationResult.frameCount < 1 || validationResult.stepTime < 15 || minor !== 0 || major !== 2) {
+  if(magic !== 'PSEQ' || start < 24 || validationResult.frameCount < 1 || validationResult.stepTime < 15 || ((minor !== 0) && (minor !== 2)) || major !== 2) {
     validationResult.errors.push(ErrorType.FileFormat);
     return validationResult;
   }

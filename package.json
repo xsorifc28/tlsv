@@ -17,7 +17,7 @@
     "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
     "clean": "node tools/cleanup",
     "package": "npm run build && npm pack",
-    "test": "jest --coverage --no-cache --runInBand",
+    "test": "jest --coverage --no-cache",
     "lint": "eslint src test --fix"
   },
   "publishConfig": {
