@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",
-    "@commitlint/config-conventional": "20.4.4",
+    "@commitlint/config-conventional": "20.5.0",
     "@eslint/js": "10.0.1",
     "@types/jest": "30.0.0",
     "codecov": "3.8.3",
